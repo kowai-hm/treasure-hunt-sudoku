@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" >
+    <title data-id="th-modified">Chasse aux trésors - Énigme 2.1</title>
+    <style>
+        /* Grid */
+        html, body { height: 100vh; margin: 0 }
+        body { display: flex; justify-content: center; align-items: center; }
+        table { 
+            border-collapse: collapse; font-family: Calibri, sans-serif; 
+        }
+        colgroup, tbody { border: solid medium; }
+        td { font-weight: bold; border: solid thin black; height: 2.4em; width: 2.4em; text-align: center; padding: 0; color: blue; }
+        .transparent-border { border-color: transparent; }
+
+        /* Sudoku cells */
+        .defaultCell { color: black; }
+        .right { color: green; }
+        .wrong { color: red; }
+
+        /* BG transition */
+        #sudokuGrid {
+            --bg-img: none;
+            position: relative; /* nécessaire pour positionner le ::before */
+        }
+        #sudokuGrid::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: var(--bg-img);
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease;
+            z-index: -1;
+            pointer-events: none;
+        }
+        #sudokuGrid.solved::before {
+            opacity: 1;
+        }
+    </style>
+<meta property="og:title" content="Chasse aux trésors - Énigme 2.1" data-id="th-modified" ><meta name="description" content="bastille-1_objectif" data-id="th-modified" ><meta property="og:description" content="bastille-1_objectif" data-id="th-modified" ><meta property="og:image" content="https://tiiny.host/assets/logo-purple-bg.png" data-id="th-modified" ><meta property="og:image:width" content="1501" data-id="th-modified" ><meta property="og:image:height" content="1501" data-id="th-modified" ><meta property="og:image:type" content="image/png" data-id="th-modified" ><meta property="og:url" content="https://bastille-1-objectif.tiiny.site/" data-id="th-modified" ><meta property="og:type" content="website" data-id="th-modified" ><script defer data-domain="bastille-1-objectif.tiiny.site" src="https://analytics.tiiny.net/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script></head>
+
+<body>
+    <table id="sudokuGrid">
+        <colgroup><col><col><col></colgroup>
+        <colgroup><col><col><col></colgroup>
+        <colgroup><col><col><col></colgroup>
+    </table>
+    <script>
+        // Grid creation and rendering
+        let sudokuGrid = document.getElementById("sudokuGrid");
+        let idCount = 0;
+        for(let i = 0; i < 3; ++i) {  // tbody
+            let tBody = document.createElement("tbody");
+            for(let j = 0; j < 3; ++j) {  // tr
+                let tr = document.createElement("tr");
+                for(let k = 0; k < 9; ++k) {  // td
+                    let td = document.createElement("td");
+                    td.id = idCount++;
+                    tr.appendChild(td);
+                }
+                tBody.appendChild(tr);
+            }
+            sudokuGrid.appendChild(tBody);
+        }
+        // Grid pre-fill
+        let values  = [
+            5,1,3,6,7,2,4,8,9,
+            6,9,4,8,3,1,7,5,2,
+            8,7,2,5,4,9,3,1,6,
+            7,3,5,2,8,4,6,9,1,
+            2,8,1,3,9,6,5,4,7,
+            4,6,9,1,5,7,2,3,8,
+            9,2,6,4,1,5,8,7,3,
+            1,5,8,7,6,3,9,2,4,
+            3,4,7,9,2,8,1,6,5,
+        ];
+        let prefill_indexes = [2,4,5,6,8,10,14,15,16,17,19,21,26,28,30,31,32,33,36,38,39,43,46,47,48,50,54,56,57,58,63,67,69,70,72,74,78,80];
+        for(let i = 0; i < prefill_indexes.length; ++i) {
+            let idx = prefill_indexes[i];
+            let cell = document.getElementById(idx);
+            cell.classList.add("defaultCell");
+            cell.innerHTML = values[idx];
+        }
+        // Setup grid interaction
+        for(let cell of document.querySelectorAll("td:not(.defaultCell)")) {
+            cell.contentEditable = true;
+            cell.addEventListener('input', () => {
+                let input = Number(cell.textContent);
+                if(values[cell.id] == input) {
+                    cell.className = "right";
+                    cell.contentEditable = false;
+                    if(document.querySelectorAll(".defaultCell, .right").length == values.length) {
+                        for(let el of document.querySelectorAll("colgroup, tbody, td")) {
+                            el.classList.add("transparent-border");
+                            if(el.nodeName == "TD") {
+                                el.textContent = '';
+                            }
+                        }
+                        sudokuGrid.style.setProperty(
+                            '--bg-img', 
+                            "url('https://photos.tf1info.fr/images/700/700/perquisitions-surrealistes-chez-jean-luc-melenchon-et-au-siege-de-la-france-insoumise-5a3534-0@1x.jpeg')"
+                        );
+                        sudokuGrid.classList.add('solved');
+                    }
+                } else {
+                    cell.className = "wrong";
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
